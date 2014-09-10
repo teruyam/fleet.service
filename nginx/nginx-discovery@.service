@@ -1,0 +1,10 @@
+[Unit]
+Description=Notify nginx
+BindsTo=nginx@%i.service
+
+[Service]
+ExecStart=/bin/sh -c "NAME=nginx-%i; while true; do PORT=$(docker port $NAME 80 | cut -d ':' -f 2); etcdctl set /services/http/nginx/$NAME '{ \"host\": \"%H\", \"port\": '$PORT' }' --ttl 60;sleep 45;done"
+ExecStop=/usr/bin/etcdctl rm /services/http/nginx/nginx-%i
+
+[X-Fleet]
+X-ConditionMachineOf=nginx@%i.service
