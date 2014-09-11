@@ -1,0 +1,16 @@
+[Unit]
+Description=My WordPress front
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill wordpress-%i
+ExecStartPre=-/usr/bin/docker rm wordpress-%i
+ExecStartPre=/usr/bin/docker pull wordpress
+ExecStart=/usr/bin/docker run --name wordpress-%i --link mysql-%i:mysql -p 80 wordpress
+ExecStop=/usr/bin/docker stop wordpress-%i
+
+[X-Fleet]
+X-Conflicts=wordpress@*.service
+X-ConditionMachineOf=mysql@%i.service

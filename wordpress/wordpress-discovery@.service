@@ -1,0 +1,10 @@
+[Unit]
+Description=Notify wordpress
+BindsTo=wordpress@%i.service
+
+[Service]
+ExecStart=/bin/sh -c "NAME=wordpress-%i; while true; do PORT=$(docker port $NAME 80 | cut -d ':' -f 2); etcdctl set /services/http/wordpress/$NAME '{ \"host\": \"%H\", \"port\": '$PORT' }' --ttl 60;sleep 45;done"
+ExecStop=/usr/bin/etcdctl rm /services/http/wordpress/wordpress-%i
+
+[X-Fleet]
+X-ConditionMachineOf=wordpress@%i.service
