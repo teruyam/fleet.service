@@ -12,5 +12,4 @@ ExecStart=/usr/bin/docker run --name wordpress-%i --link mysql-%i:mysql -p 80 wo
 ExecStop=/usr/bin/docker stop wordpress-%i
 
 [X-Fleet]
-X-Conflicts=wordpress@*.service
 X-ConditionMachineOf=mysql@%i.service
